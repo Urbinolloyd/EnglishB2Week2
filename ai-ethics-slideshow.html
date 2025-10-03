@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ethics - Week 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            min-height: 600px;
+            padding: 60px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .slide h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin: 20px 0 15px 0;
+        }
+        
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .vocab-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .vocab-word {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #764ba2;
+            margin-bottom: 5px;
+        }
+        
+        .phonetic {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .definition {
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .example {
+            color: #555;
+            font-style: italic;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+        
+        .activity-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #ffc107;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+            line-height: 1.8;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .cue-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+        
+        .cue-card h4 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .prompt-list {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .slide-counter {
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .value-box {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #2c5f2d;
+        }
+        
+        .debate-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .for-against {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .for-box {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #28a745;
+        }
+        
+        .against-box {
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #dc3545;
+        }
+        
+        .role-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+        
+        .role-title {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .timeline {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #0066cc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>🤖 AI Ethics</h1>
+            <h2 style="text-align: center; color: #764ba2;">Week 2: Activities & Discussion</h2>
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 1.5em; color: #555;">B2 English Course</p>
+                <p style="font-size: 1.2em; color: #777; margin-top: 20px;">4-Hour Interactive Lesson</p>
+                <div style="margin-top: 60px; padding: 30px; background: #f8f9fa; border-radius: 15px;">
+                    <h3 style="color: #667eea;">Today's Focus:</h3>
+                    <p style="font-size: 1.1em; line-height: 1.8; color: #555;">
+                        ✓ Discuss ethical dilemmas in AI<br>
+                        ✓ Analyze real-world scenarios<br>
+                        ✓ Practice debate and argumentation<br>
+                        ✓ Develop critical thinking skills
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Lesson Overview -->
+        <div class="slide">
+            <h2>📋 Lesson Overview</h2>
+            <div class="timeline">
+                <h3>First 2 Hours: Foundation</h3>
+                <ul>
+                    <li><strong>Activity 1:</strong> AI Ethical Dilemma Discussions</li>
+                    <li><strong>Activity 2:</strong> Listening Comprehension</li>
+                    <li><strong>Activity 3:</strong> Text Classification</li>
+                    <li><strong>Activity 4:</strong> Opinion Statements</li>
+                </ul>
+            </div>
+            <div class="timeline">
+                <h3>Second 2 Hours: Application</h3>
+                <ul>
+                    <li><strong>Activity 5:</strong> Agree/Disagree Scale</li>
+                    <li><strong>Activity 6:</strong> Two-Minute Debates</li>
+                    <li><strong>Activity 7:</strong> Citizens' Forum Role-Play</li>
+                    <li><strong>Activity 8:</strong> Problem-Solving Workshop</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Key Vocabulary - Core Terms -->
+        <div class="slide">
+            <h2>📚 Key Vocabulary: Core AI Ethics Terms</h2>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="vocab-word">algorithm</div>
+                    <div class="phonetic">/ˈælɡərɪðəm/</div>
+                    <div class="definition">A set of rules or instructions that a computer follows</div>
+                    <div class="example">The recruitment algorithm analyzed thousands of applications.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">bias</div>
+                    <div class="phonetic">/ˈbaɪəs/</div>
+                    <div class="definition">Unfair preference or prejudice; systematic errors in AI</div>
+                    <div class="example">The system showed bias against darker skin tones.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">accountability</div>
+                    <div class="phonetic">/əˌkaʊntəˈbɪləti/</div>
+                    <div class="definition">Being responsible and expected to explain decisions</div>
+                    <div class="example">We need clear accountability when AI makes mistakes.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">autonomous</div>
+                    <div class="phonetic">/ɔːˈtɑːnəməs/</div>
+                    <div class="definition">Able to operate independently without human control</div>
+                    <div class="example">Autonomous vehicles can drive themselves.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: More Vocabulary -->
+        <div class="slide">
+            <h2>📚 Key Vocabulary: Values & Discussion</h2>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="vocab-word">justice</div>
+                    <div class="phonetic">/ˈdʒʌstɪs/</div>
+                    <div class="definition">Fair treatment and equality</div>
+                    <div class="example">We demand justice for those harmed by biased AI.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">privacy</div>
+                    <div class="phonetic">/ˈpraɪvəsi/</div>
+                    <div class="definition">Freedom from having your personal information seen</div>
+                    <div class="example">Smart home devices raise privacy questions.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">ethical dilemma</div>
+                    <div class="phonetic">/ˈeθɪkəl dɪˈlemə/</div>
+                    <div class="definition">Choosing between options, neither clearly right or wrong</div>
+                    <div class="example">Should the car save the passenger or pedestrian?</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">stakeholder</div>
+                    <div class="phonetic">/ˈsteɪkhoʊldər/</div>
+                    <div class="definition">A person or group with an interest in something</div>
+                    <div class="example">Patients and doctors are stakeholders in healthcare AI.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Useful Phrases -->
+        <div class="slide">
+            <h2>💬 Useful Discussion Phrases</h2>
+            <div class="activity-box">
+                <h3>Expressing Opinions:</h3>
+                <ul>
+                    <li>In my opinion / view...</li>
+                    <li>I believe / think that...</li>
+                    <li>From my perspective...</li>
+                    <li>It seems to me that...</li>
+                </ul>
+            </div>
+            <div class="activity-box">
+                <h3>Agreeing & Disagreeing:</h3>
+                <ul>
+                    <li><strong>Agreeing:</strong> I completely agree... / That's exactly right...</li>
+                    <li><strong>Disagreeing:</strong> I see your point, but... / With respect, I think...</li>
+                </ul>
+            </div>
+            <div class="activity-box">
+                <h3>Useful Collocations:</h3>
+                <ul>
+                    <li>raise concerns | take a stand | weigh the options</li>
+                    <li>on the one hand... on the other hand</li>
+                    <li>for instance / for example | it depends on</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Activity 1 Introduction -->
+        <div class="slide">
+            <h2>🎯 Activity 1: AI Ethical Dilemmas</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Work in small groups (3-4 students)</li>
+                    <li>Each group receives a different cue card</li>
+                    <li>Read the scenario carefully</li>
+                    <li>Discuss the discussion prompts (15 minutes)</li>
+                    <li>Present your conclusions to the class</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Grammar Focus: Second Conditional</h3>
+                <p style="font-size: 1.2em; margin: 15px 0;"><strong>If + past simple, would/could/might + base verb</strong></p>
+                <div class="example">
+                    ✓ If I were the CEO, I would shut down the system.<br>
+                    ✓ If the AI had to choose, it might prioritize safety.<br>
+                    ✓ If we implemented this, we could reduce bias.
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Cue Card 1 -->
+        <div class="slide">
+            <h2>📋 Cue Card 1: Biased Recruitment</h2>
+            <div class="cue-card">
+                <h4>The Scenario:</h4>
+                <p>A major tech company has developed an AI recruitment system. After one year, data shows the AI consistently ranks male candidates higher than equally qualified female candidates for technical positions. The AI learned this bias from historical hiring data.</p>
+                <div class="prompt-list">
+                    <h4>Discussion Prompts:</h4>
+                    <ul>
+                        <li>What would you do if you were the CEO?</li>
+                        <li>Who is responsible for this bias?</li>
+                        <li>What are the advantages and disadvantages of continuing versus shutting down?</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <strong>Key Vocabulary:</strong> bias, accountability, discrimination, deploy, stakeholder
+            </div>
+        </div>
+
+        <!-- Slide 8: Cue Card 2 -->
+        <div class="slide">
+            <h2>📋 Cue Card 2: Autonomous Vehicle</h2>
+            <div class="cue-card">
+                <h4>The Scenario:</h4>
+                <p>An autonomous vehicle is traveling at high speed when it detects an unavoidable accident. The AI must choose: swerve left and potentially hit a pedestrian, OR continue straight and crash into a barrier, likely injuring the passenger. It has 0.3 seconds to decide.</p>
+                <div class="prompt-list">
+                    <h4>Discussion Prompts:</h4>
+                    <ul>
+                        <li>If you were programming the vehicle, what would you prioritize?</li>
+                        <li>Should passengers know in advance how their vehicle would respond?</li>
+                        <li>What if all manufacturers programmed vehicles differently?</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <strong>Key Vocabulary:</strong> autonomous, ethical dilemma, consequence, accountability
+            </div>
+        </div>
+
+        <!-- Slide 9: Cue Card 3 -->
+        <div class="slide">
+            <h2>📋 Cue Card 3: Healthcare Resources</h2>
+            <div class="cue-card">
+                <h4>The Scenario:</h4>
+                <p>A hospital uses AI to prioritize patients for organ transplants and ICU beds. The algorithm analyzes survival rates and recovery likelihood. Critics argue it disadvantages elderly patients and those with pre-existing conditions. Supporters claim it maximizes lives saved.</p>
+                <div class="prompt-list">
+                    <h4>Discussion Prompts:</h4>
+                    <ul>
+                        <li>Would you continue using this AI system as a hospital administrator?</li>
+                        <li>How would you balance efficiency with fairness?</li>
+                        <li>What if your own family member was ranked lower?</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <strong>Key Vocabulary:</strong> justice, equality, discrimination, stakeholder, consequence
+            </div>
+        </div>
+
+        <!-- Slide 10: Activity 2 -->
+        <div class="slide">
+            <h2>🎧 Activity 2: Listening Comprehension</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>You will listen to an audio/video clip about AI ethics</li>
+                    <li><strong>First listening:</strong> General comprehension (don't write)</li>
+                    <li><strong>Second listening:</strong> Complete the chart with specific details</li>
+                    <li>Compare answers with a partner</li>
+                    <li>Class discussion of findings</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>What to Listen For:</h3>
+                <ul>
+                    <li>What is the ethical problem?</li>
+                    <li>Who are the stakeholders affected?</li>
+                    <li>What solutions are proposed?</li>
+                    <li>What key terminology is used?</li>
+                    <li>What are the main arguments and counter-arguments?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 11: Activity 3 -->
+        <div class="slide">
+            <h2>📖 Activity 3: Text Classification</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Read 6 text excerpts about AI ethics issues</li>
+                    <li>Identify which core value each text represents</li>
+                    <li>Classify each text into the correct category</li>
+                    <li>Justify your decisions to your group</li>
+                </ol>
+            </div>
+            <div class="for-against" style="grid-template-columns: 1fr 1fr 1fr;">
+                <div class="value-box" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <h4>JUSTICE/EQUALITY</h4>
+                    Fair treatment<br>Non-discrimination<br>Equal opportunity
+                </div>
+                <div class="value-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <h4>FREEDOM/AUTONOMY</h4>
+                    Individual choice<br>Self-determination<br>Human agency
+                </div>
+                <div class="value-box" style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
+                    <h4>SECURITY/PRIVACY</h4>
+                    Data protection<br>Confidentiality<br>Information control
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Activity 4 -->
+        <div class="slide">
+            <h2>💭 Activity 4: Opinion Statements</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Read statements about AI bias and accountability</li>
+                    <li>Choose your position on each statement</li>
+                    <li>Find classmates with different opinions</li>
+                    <li>Discuss and justify your viewpoints</li>
+                    <li>Use second conditional structures in your arguments</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Sample Statement:</h3>
+                <p style="font-size: 1.2em; font-style: italic; margin: 15px 0;">"When an AI system makes a discriminatory decision, the person most accountable should be the programmer who wrote the code."</p>
+                <div style="margin-top: 20px;">
+                    <strong>Your Response:</strong>
+                    <ul>
+                        <li>Do you agree or disagree?</li>
+                        <li>Why? Give reasons and examples</li>
+                        <li>What would happen if...? (use second conditional)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Second Half Introduction -->
+        <div class="slide">
+            <h2>🔄 Break & Transition</h2>
+            <div style="text-align: center; padding: 60px;">
+                <h3 style="font-size: 2em; color: #667eea;">First 2 Hours Complete! ✓</h3>
+                <div style="margin: 50px 0; padding: 40px; background: #f8f9fa; border-radius: 15px;">
+                    <h3 style="color: #764ba2;">Take a 10-minute break</h3>
+                    <p style="font-size: 1.2em; color: #555; margin-top: 20px;">
+                        When we return, we'll focus on:<br><br>
+                        • Advanced debates<br>
+                        • Role-play scenarios<br>
+                        • Problem-solving activities
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Advanced Vocabulary -->
+        <div class="slide">
+            <h2>📚 Advanced Vocabulary: Part 2</h2>
+            <div class="vocab-grid">
+                <div class="vocab-card">
+                    <div class="vocab-word">surveillance</div>
+                    <div class="phonetic">/sərˈveɪləns/</div>
+                    <div class="definition">Close observation or monitoring</div>
+                    <div class="example">Facial recognition enables mass surveillance in public.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">transparency</div>
+                    <div class="phonetic">/trænsˈpærənsi/</div>
+                    <div class="definition">Being open, honest, and easy to understand</div>
+                    <div class="example">AI companies must show transparency about algorithms.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">deepfake</div>
+                    <div class="phonetic">/ˈdiːpfeɪk/</div>
+                    <div class="definition">Synthetic media created by AI, especially fake videos</div>
+                    <div class="example">Deepfakes pose serious risks to democracy.</div>
+                </div>
+                <div class="vocab-card">
+                    <div class="vocab-word">liability</div>
+                    <div class="phonetic">/ˌlaɪəˈbɪləti/</div>
+                    <div class="definition">Legal responsibility for damage or debt</div>
+                    <div class="example">Who has liability when a self-driving car crashes?</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Activity 5 -->
+        <div class="slide">
+            <h2>⚖️ Activity 5: Agree/Disagree Scale</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Rate each statement on a scale of 1-5</li>
+                    <li>1 = Disagree totally | 5 = Agree totally</li>
+                    <li>Stand in different corners of the room based on your rating</li>
+                    <li>Discuss your position with nearby students</li>
+                    <li>One person from each group presents their reasoning</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Sample Statement:</h3>
+                <p style="font-size: 1.2em; font-style: italic; margin: 15px 0;">"The benefits of AI-powered personalization are worth giving up some privacy."</p>
+                <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 1.1em;">
+                    <span style="color: #dc3545; font-weight: bold;">1 - Disagree</span>
+                    <span style="color: #ffc107; font-weight: bold;">3 - Neutral</span>
+                    <span style="color: #28a745; font-weight: bold;">5 - Agree</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Activity 6 Intro -->
+        <div class="slide">
+            <h2>🗣️ Activity 6: Two-Minute Debates</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Work in pairs - one FOR, one AGAINST the motion</li>
+                    <li>Prepare your arguments (5 minutes)</li>
+                    <li>Each person speaks for 2 minutes</li>
+                    <li>No interruptions during speaking time</li>
+                    <li>Class votes on the most convincing argument</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Useful Debate Language:</h3>
+                <ul>
+                    <li>"I would like to argue that..."</li>
+                    <li>"The key issue here is..."</li>
+                    <li>"I respectfully disagree with..."</li>
+                    <li>"On the contrary..."</li>
+                    <li>"The evidence suggests..."</li>
+                    <li>"This clearly demonstrates..."</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 17: Debate Motion 1 -->
+        <div class="slide">
+            <h2>🗣️ Motion 1: Political Campaigning</h2>
+            <div class="debate-section">
+                <h3 style="text-align: center; color: #667eea; font-size: 1.5em; margin-bottom: 20px;">
+                    "AI should be banned in political campaigning"
+                </h3>
+                <div class="for-against">
+                    <div class="for-box">
+                        <h4 style="color: #28a745; margin-bottom: 15px;">✓ Arguments FOR</h4>
+                        <ul>
+                            <li>Manipulation through micro-targeting</li>
+                            <li>Spread of misinformation/deepfakes</li>
+                            <li>Undermines democracy</li>
+                            <li>Unfair advantage for wealthy</li>
+                        </ul>
+                    </div>
+                    <div class="against-box">
+                        <h4 style="color: #dc3545; margin-bottom: 15px;">✗ Arguments AGAINST</h4>
+                        <ul>
+                            <li>Restricts free speech</li>
+                            <li>Can educate voters efficiently</li>
+                            <li>Traditional methods also manipulate</li>
+                            <li>Technology isn't the problem</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Debate Motion 2 -->
+        <div class="slide">
+            <h2>🗣️ Motion 2: Facial Recognition</h2>
+            <div class="debate-section">
+                <h3 style="text-align: center; color: #667eea; font-size: 1.5em; margin-bottom: 20px;">
+                    "Facial recognition should be used in all public spaces"
+                </h3>
+                <div class="for-against">
+                    <div class="for-box">
+                        <h4 style="color: #28a745; margin-bottom: 15px;">✓ Arguments FOR</h4>
+                        <ul>
+                            <li>Deters crime effectively</li>
+                            <li>Finds missing persons quickly</li>
+                            <li>Makes society safer overall</li>
+                            <li>We already have CCTV cameras</li>
+                        </ul>
+                    </div>
+                    <div class="against-box">
+                        <h4 style="color: #dc3545; margin-bottom: 15px;">✗ Arguments AGAINST</h4>
+                        <ul>
+                            <li>Mass surveillance violates privacy</li>
+                            <li>Risk of misidentification</li>
+                            <li>Can be abused by governments</li>
+                            <li>Affects minorities disproportionately</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Activity 7 Introduction -->
+        <div class="slide">
+            <h2>🏛️ Activity 7: Citizens' Forum</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Each student receives a role card</li>
+                    <li>Read your role carefully and prepare (5 minutes)</li>
+                    <li>The Councillor (moderator) opens the meeting</li>
+                    <li>Each stakeholder presents their problem (2 minutes each)</li>
+                    <li>Group discussion and solution proposals (15 minutes)</li>
+                    <li>Councillor summarizes and closes the meeting</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Forum Topic:</h3>
+                <p style="font-size: 1.3em; text-align: center; color: #667eea; font-weight: bold; margin: 20px 0;">
+                    "Bias and Accountability in City AI Systems"
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 20: Forum Roles -->
+        <div class="slide">
+            <h2>🎭 Citizens' Forum Roles</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="role-card">
+                    <div class="role-title">👨‍⚖️ Local Councillor (Moderator)</div>
+                    <p><strong>Your task:</strong> Chair the meeting professionally, ensure everyone contributes, summarize solutions</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">👮 Police Officer</div>
+                    <p><strong>Your concern:</strong> Predictive policing AI creates community tension and has high error rates</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">🏥 Healthcare Administrator</div>
+                    <p><strong>Your concern:</strong> AI diagnosis contradicts doctors; insurance AI denies coverage unfairly</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">👨‍🏫 Teacher</div>
+                    <p><strong>Your concern:</strong> AI grading favors certain styles; tracking algorithms limit student opportunities</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">🛡️ Privacy Advocate</div>
+                    <p><strong>Your concern:</strong> Traffic system collects data without consent; no appeals process for AI decisions</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-title">💼 Business Owner</div>
+                    <p><strong>Your concern:</strong> Regulations too expensive; public distrust hurting legitimate AI applications</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Forum Language -->
+        <div class="slide">
+            <h2>💬 Functional Language for Forums</h2>
+            <div class="activity-box">
+                <h3>Stating Problems:</h3>
+                <ul>
+                    <li>From a [perspective]...</li>
+                    <li>The problem we're encountering is...</li>
+                    <li>We've noticed that...</li>
+                    <li>This poses a serious problem because...</li>
+                </ul>
+            </div>
+            <div class="activity-box">
+                <h3>Proposing Solutions:</h3>
+                <ul>
+                    <li>I would suggest that...</li>
+                    <li>One possible solution would be...</li>
+                    <li>Perhaps we could...</li>
+                    <li>We should consider...</li>
+                </ul>
+            </div>
+            <div class="activity-box">
+                <h3>Moderator Language:</h3>
+                <ul>
+                    <li>Let me summarize what we've discussed...</li>
+                    <li>We need to address...</li>
+                    <li>Let's hear from [person]...</li>
+                    <li>To reach a consensus, we should...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 22: Activity 8 -->
+        <div class="slide">
+            <h2>🔧 Activity 8: AI Tool Problems</h2>
+            <div class="instructions">
+                <h3>📝 Instructions:</h3>
+                <ol>
+                    <li>Work in pairs or small groups</li>
+                    <li>Each group receives a common AI tool problem</li>
+                    <li>Brainstorm practical solutions (5 minutes)</li>
+                    <li>Share your solutions with another group</li>
+                    <li>Class discussion: Which solutions work best?</li>
+                </ol>
+            </div>
+            <div class="activity-box">
+                <h3>Example Problems:</h3>
+                <ul>
+                    <li>The AI gives vague answers that don't help my situation</li>
+                    <li>The AI provides "facts" that aren't true (hallucinations)</li>
+                    <li>The AI's writing is too formal/informal</li>
+                    <li>The AI doesn't remember context from earlier conversation</li>
+                    <li>The AI refuses to help with something I think is reasonable</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 23: Problem-Solving Language -->
+        <div class="slide">
+            <h2>💡 Problem-Solving Language</h2>
+            <div class="for-against">
+                <div class="activity-box" style="margin: 0;">
+                    <h3>Describing Problems:</h3>
+                    <ul>
+                        <li>I'm having difficulty with...</li>
+                        <li>The main issue is...</li>
+                        <li>What I find problematic is...</li>
+                        <li>The challenge I'm facing is...</li>
+                    </ul>
+                </div>
+                <div class="activity-box" style="margin: 0;">
+                    <h3>Offering Solutions:</h3>
+                    <ul>
+                        <li>Have you tried...?</li>
+                        <li>One possible solution might be...</li>
+                        <li>In my experience, it helps to...</li>
+                        <li>What if you were to...?</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="activity-box" style="margin-top: 20px;">
+                <h3>Key Terms:</h3>
+                <p><strong>propose | implement | compromise | advocate | address | audit | regulate</strong></p>
+            </div>
+        </div>
+
+        <!-- Slide 24: Lesson Wrap-Up -->
+        <div class="slide">
+            <h2>🎯 Lesson Review</h2>
+            <div class="activity-box">
+                <h3>Today We:</h3>
+                <ul style="font-size: 1.1em;">
+                    <li>✓ Discussed complex ethical dilemmas in AI</li>
+                    <li>✓ Analyzed real-world scenarios from multiple perspectives</li>
+                    <li>✓ Practiced formal debate and argumentation</li>
+                    <li>✓ Developed role-play and problem-solving skills</li>
+                    <li>✓ Used second conditional structures extensively</li>
+                    <li>✓ Expanded vocabulary for discussing ethics and technology</li>
+                </ul>
+            </div>
+            <div class="instructions" style="margin-top: 30px;">
+                <h3>Homework / Reflection:</h3>
+                <p style="font-size: 1.1em; line-height: 1.8;">
+                    Write a short essay (250-300 words): <br>
+                    <em>"What is the most important ethical challenge facing AI development today, and what should be done about it?"</em>
+                    <br><br>Use vocabulary and structures from today's lesson.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 25: Final Slide -->
+        <div class="slide">
+            <div style="text-align: center; padding: 80px 20px;">
+                <h1 style="font-size: 3.5em; margin-bottom: 30px;">🎓</h1>
+                <h2 style="color: #667eea; font-size: 2.5em;">Great Work Today!</h2>
+                <p style="font-size: 1.3em; color: #555; margin: 40px 0;">
+                    You've developed important skills in:
+                </p>
+                <div style="background: #f8f9fa; padding: 40px; border-radius: 15px; margin: 30px 0;">
+                    <p style="font-size: 1.2em; line-height: 2;">
+                        Critical Thinking • Debate • Argumentation<br>
+                        Ethical Reasoning • Problem-Solving<br>
+                        Academic Discussion Skills
+                    </p>
+                </div>
+                <p style="font-size: 1.2em; color: #764ba2; margin-top: 50px;">
+                    See you next week! 👋
+                </p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-primary" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <span class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">25</span>
+            </span>
+            <button class="btn-primary" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            if (n >= totalSlides) currentSlide = totalSlides - 1;
+            if (n < 0) currentSlide = 0;
+            
+            slides[currentSlide].classList.add('active');
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') changeSlide(-1);
+            if (event.key === 'ArrowRight') changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
